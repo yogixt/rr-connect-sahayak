@@ -1,0 +1,10 @@
+# Caddy gets a free Let's Encrypt TLS cert for $DOMAIN and reverse-proxies to the
+# backend. Requires an A record: $DOMAIN -> the VM's public IP.
+#
+# No domain yet? Use sslip.io, e.g. DOMAIN=api-<vm-ip-with-dashes>.sslip.io
+# (203.0.113.5 -> api-203-0-113-5.sslip.io) and Caddy still issues a real cert.
+
+{$DOMAIN} {
+	encode zstd gzip
+	reverse_proxy backend:8000
+}
