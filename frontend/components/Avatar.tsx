@@ -12,9 +12,11 @@ import { motion } from "framer-motion";
 export default function Avatar({
   size = 120,
   draggable = false,
+  src = "/electrician.png",
 }: {
   size?: number;
   draggable?: boolean;
+  src?: string;
 }) {
   const badge = (
     <motion.div
@@ -27,7 +29,7 @@ export default function Avatar({
       className="relative overflow-hidden rounded-full bg-gradient-to-b from-amber-100 to-white shadow-lg ring-4 ring-white"
     >
       <Image
-        src="/electrician.png"
+        src={src}
         alt="Sahayak"
         fill
         sizes={`${size}px`}

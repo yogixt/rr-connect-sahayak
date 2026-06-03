@@ -26,7 +26,7 @@ export default function LanguagePicker() {
         transition={{ type: "spring", stiffness: 200, damping: 18 }}
         className="flex flex-col items-center gap-3"
       >
-        <Avatar size={160} draggable />
+        <Avatar size={160} draggable src="/electrician-classic.png" />
         <h1 className="text-3xl font-extrabold tracking-tight text-stone-900">RR Connect Sahayak</h1>
         <p className="text-lg text-stone-500">{PROMPT.hi} · {PROMPT.en}</p>
       </motion.div>
