@@ -37,10 +37,13 @@ Order matters: **backend first** (the frontend build needs its URL).
   ```
 
 ### A3. Install Docker + get the code on the VM
+The repo is **private**, so authenticate GitHub on the VM with `gh` (one-time device
+login), then clone:
 ```bash
-sudo apt update && sudo apt install -y docker.io docker-compose-v2 git
+sudo apt update && sudo apt install -y docker.io docker-compose-v2 gh
 sudo usermod -aG docker $USER && newgrp docker
-git clone <your repo url> rr-connect-sahayak && cd rr-connect-sahayak
+gh auth login                                   # choose GitHub.com -> HTTPS -> device code
+gh repo clone yogixt/rr-connect-sahayak && cd rr-connect-sahayak
 ```
 
 ### A4. Point a hostname at the VM
@@ -71,8 +74,9 @@ npx vercel link             # create/link the project (root = this frontend fold
 npx vercel env add NEXT_PUBLIC_API_BASE production    # value: https://<your DOMAIN>
 npx vercel --prod           # deploy
 ```
-Or do it in the Vercel dashboard: import the repo, set **Root Directory = frontend**,
-add env var `NEXT_PUBLIC_API_BASE = https://<your DOMAIN>`, deploy.
+Or do it in the Vercel dashboard: import **yogixt/rr-connect-sahayak**, set
+**Root Directory = frontend**, add env var `NEXT_PUBLIC_API_BASE = https://<your DOMAIN>`,
+deploy.
 
 After you get the Vercel URL, put it in `.env.prod` as `FRONTEND_ORIGIN` on the VM and
 re-run the `up -d` command so CORS allows it.
