@@ -26,7 +26,7 @@ export default function Chat() {
     <div className="mx-auto flex h-dvh max-w-md flex-col bg-amber-50/40">
       {/* Header */}
       <header className="flex items-center gap-3 border-b border-stone-200 bg-white px-4 py-3 shadow-sm">
-        <Avatar size={44} />
+        <Avatar size={44} src="/electrician-classic.png" />
         <div className="flex-1">
           <h1 className="text-lg font-bold leading-tight text-stone-900">RR Connect Sahayak</h1>
           <p className="text-xs text-stone-400">Always here to help</p>
