@@ -64,9 +64,10 @@ def _normalize_lang(lang: str | None) -> str:
 async def render_state(node_id: str, lang: str, session: ChatSession, db: AsyncSession) -> dict:
     """Render a node, personalising 'Talk to ASM' with the user's area ASM.
 
-    Three cases on the talk_asm node:
-      - ASM known  -> show their name + a tap-to-call button
-      - pincode given but no ASM -> tell them, offer customer care
+    The app is an embedded webview, so we SHOW phone numbers as text rather than
+    trigger a direct dial. Three cases on the talk_asm node:
+      - ASM known  -> show their name + number as text
+      - pincode given but no ASM -> show the customer-care number as text
       - no pincode yet -> offer 'Get my ASM number' (opens the number pad)
     """
     payload = engine.render_node(node_id, lang)
@@ -76,20 +77,14 @@ async def render_state(node_id: str, lang: str, session: ChatSession, db: AsyncS
     mapping = await find_mapping(db, session.pincode, session.segment)
     if mapping and mapping.asm_phone:
         name = mapping.asm_name or "ASM"
-        line = {"hi": f"\n\n**आपके इलाके के ASM:** {name}",
-                "en": f"\n\n**Your area ASM:** {name}"}
+        phone = mapping.asm_phone
+        line = {"hi": f"\n\n**आपके इलाके के ASM:**\n{name}\n**फ़ोन नंबर:** {phone}",
+                "en": f"\n\n**Your area ASM:**\n{name}\n**Phone number:** {phone}"}
         payload["text"] += line.get(lang, line["en"])
-        call_opt = {
-            "id": "call_asm", "icon": "phone",
-            "label": {"hi": f"{name} को कॉल करें", "en": f"Call {name}"},
-            "action": {"type": "call", "value": mapping.asm_phone},
-        }
-        payload["options"] = [engine._render_option(call_opt, lang)] + payload["options"]
     elif session.pincode:
-        line = {"hi": "\n\n**इस पिनकोड के लिए ASM नहीं मिला।**\nकृपया कस्टमर केयर को कॉल करें।",
-                "en": "\n\n**No ASM found for this pincode.**\nPlease call Customer Care."}
+        line = {"hi": f"\n\n**इस पिनकोड के लिए ASM नहीं मिला।**\nकस्टमर केयर: {seed.CARE_NUMBER}",
+                "en": f"\n\n**No ASM found for this pincode.**\nCustomer Care: {seed.CARE_NUMBER}"}
         payload["text"] += line.get(lang, line["en"])
-        payload["options"] = [engine._render_option(seed.call_care(), lang)] + payload["options"]
     else:
         get_opt = {
             "id": "get_asm", "icon": "location",

@@ -14,16 +14,14 @@ Languages: hi (Hindi) and en (English) only. Missing strings fall back hi -> en.
 To change what the bot says, edit this file and restart the backend.
 """
 
-# Customer-care number. The source spec leaves this as a placeholder ("X");
-# confirm the official WCD / customer-care line before go-live.
-CARE_NUMBER = "1800 103 2676"
-_CARE_DIAL = CARE_NUMBER.replace(" ", "")
+# Official RR Connect customer-care toll-free number (shown as text — the app is an
+# embedded webview, so we display numbers rather than trigger a direct dial).
+CARE_NUMBER = "1800 103 6633"
 
 # ---- Reusable option labels -------------------------------------------------
 L_MAIN = {"hi": "मुख्य मेन्यू", "en": "Main Menu"}
 L_BACK = {"hi": "वापस", "en": "Back"}
 L_ASM = {"hi": "ASM से बात करें", "en": "Talk to ASM"}
-L_CALL = {"hi": "कस्टमर केयर को कॉल करें", "en": "Call Customer Care"}
 L_EXIT = {"hi": "बंद करें", "en": "Exit"}
 L_MORE = {"hi": "और मदद चाहिए", "en": "More help"}
 
@@ -39,11 +37,6 @@ def back(target):
 
 def talk_asm():
     return {"id": "talk_asm", "icon": "headset", "label": L_ASM, "next": "talk_asm"}
-
-
-def call_care():
-    return {"id": "call_care", "icon": "phone", "label": L_CALL,
-            "action": {"type": "call", "value": _CARE_DIAL}}
 
 
 NODES = {
@@ -81,7 +74,7 @@ NODES = {
             "hi": f"तार और केबल (WCD) के लिए हमें कॉल करें।\n\n**फ्री नंबर:** {CARE_NUMBER}",
             "en": f"For Wires & Cables (WCD), please call us.\n\n**Free number:** {CARE_NUMBER}",
         },
-        "options": [call_care(), main_menu(),
+        "options": [main_menu(),
                     {"id": "exit", "icon": "logout", "label": L_EXIT, "next": "exit"}],
     },
 
@@ -202,7 +195,7 @@ NODES = {
             "hi": f"अब भी दिक्कत है?\n\nकस्टमर केयर को कॉल करें।\n\n**नंबर:** {CARE_NUMBER}",
             "en": f"Still a problem?\n\nPlease call Customer Care.\n\n**Number:** {CARE_NUMBER}",
         },
-        "options": [call_care(), main_menu()],
+        "options": [main_menu()],
     },
 
     # ===================================================== complete KYC
@@ -263,7 +256,7 @@ NODES = {
             "hi": f"अब भी दिक्कत है?\n\nकस्टमर केयर को कॉल करें।\n\n**नंबर:** {CARE_NUMBER}",
             "en": f"Still a problem?\n\nPlease call Customer Care.\n\n**Number:** {CARE_NUMBER}",
         },
-        "options": [call_care(), main_menu()],
+        "options": [main_menu()],
     },
 
     # ============================================ KYC not approved / workflow
@@ -312,7 +305,7 @@ NODES = {
             "hi": f"अब भी दिक्कत है?\n\nकस्टमर केयर को कॉल करें।\n\n**नंबर:** {CARE_NUMBER}",
             "en": f"Still a problem?\n\nPlease call Customer Care.\n\n**Number:** {CARE_NUMBER}",
         },
-        "options": [call_care(), main_menu()],
+        "options": [main_menu()],
     },
 
     # ===================================================== scheme
@@ -383,7 +376,7 @@ NODES = {
             "hi": f"अब भी दिक्कत है?\n\nकस्टमर केयर को कॉल करें।\n\n**नंबर:** {CARE_NUMBER}",
             "en": f"Still a problem?\n\nPlease call Customer Care.\n\n**Number:** {CARE_NUMBER}",
         },
-        "options": [call_care(), main_menu()],
+        "options": [main_menu()],
     },
 
     # ===================================================== wrong role
