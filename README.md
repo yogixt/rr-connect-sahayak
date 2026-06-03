@@ -1,59 +1,53 @@
 # RR Connect Sahayak
 
 A deterministic, multi-language support chatbot for field electricians. Every reply
-and option is pre-defined and validated server-side — **no AI, no LLM**. Built to be
-usable by people with limited reading ability: large tap-only buttons, simple language,
-clear line icons, and smooth animation.
+and option is pre-defined — **no AI, no LLM**. Built to be usable by people with limited
+reading ability: large tap-only buttons, simple language, clear line icons, and smooth
+animation.
+
+It is a single Next.js app that deploys to **Vercel** — no separate backend, no database.
 
 ## How it works
 
 ```
-Browser (Next.js)  ──HTTP──►  FastAPI  ──►  deterministic flow engine (seed.py)
-                                  │
-                                  └──►  Postgres (sessions + step log, for analytics)
+Browser (Next.js)
+  ├─ deterministic flow engine   lib/flow.ts        (runs in the browser)
+  └─ pincode → ASM lookup        app/api/asm        (Vercel serverless route)
 ```
 
-The conversation is a graph of nodes in `backend/app/flow/seed.py`. Each node has
-localized text and a list of options; each option points to the next node. The server
-only ever advances along an allowed option, so the bot can never go off-script.
+The conversation is a graph of nodes in `lib/flow.ts`. Each node has localized text and
+a list of options; each option points to the next node. The engine only ever advances
+along an allowed option, so the bot can never go off-script. Because every reply is
+pre-defined and the graph holds no secrets, the flow runs client-side and every tap is
+instant.
 
-- **Languages:** Hindi, English, Marathi (fallback hi → en for missing strings).
+The only server-side piece is the pincode → ASM directory (≈39k rows, shipped as
+`data/pincode_mapping.csv.gz`). The `/api/asm` route holds it and returns just the one
+matching ASM, so the full phone list never goes to the browser.
+
+- **Languages:** Hindi, English (fallback hi → en for missing strings).
 
 ## Run locally
 
-Backend (with Docker):
-
 ```bash
-docker compose up -d --build
-# API on http://localhost:8000  (docs at /docs)
-```
-
-Or run the backend directly:
-
-```bash
-cd backend
-uv sync                       # or: pip install -r requirements.txt
-export DATABASE_URL=postgresql+asyncpg://bijli:bijli@localhost:5432/bijli_mitra
-uvicorn app.main:app --reload
-```
-
-Frontend:
-
-```bash
-cd frontend
-cp .env.local.example .env.local      # point NEXT_PUBLIC_API_BASE at the backend
 npm install
-npm run dev                            # http://localhost:3200
+npm run dev          # http://localhost:3200
 ```
+
+That's it — no backend or database to start.
 
 ## Edit the content
 
-Change what the bot says in `backend/app/flow/seed.py` and restart the backend.
-Adding a language = add its code to `LANGUAGES` in `app/flow/engine.py` and provide the
+Change what the bot says in `lib/flow.ts` (the `NODES` graph) — the dev server hot-reloads.
+Adding a language = add its code to `LANGUAGES` in `lib/flow.ts` and provide the
 translations on each node.
 
 ## Deploy
 
-- **Frontend:** Vercel. Set `NEXT_PUBLIC_API_BASE` to the public backend URL.
-- **Backend + Postgres:** any always-on host (single small VM is plenty — there is no
-  model to run). Put it behind HTTPS and set `FRONTEND_ORIGIN` to the Vercel URL.
+Push the repo and import it on **Vercel** — the project root is the repo root, so there
+is nothing to configure. No environment variables, no backend, no database. The `/api/asm`
+route runs as a Vercel function and the pincode data is bundled into it automatically
+(see `outputFileTracingIncludes` in `next.config.ts`).
+
+Because the flow runs in the browser and Vercel functions don't idle-sleep the way a free
+always-on VM does, there is nothing to cold-start or keep alive.
