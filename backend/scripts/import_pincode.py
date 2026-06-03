@@ -7,18 +7,25 @@ so this needs no spreadsheet libraries and can run inside the backend container:
 
 It is idempotent — it clears the table and reloads. Duplicate (pincode, segment)
 rows in the source are de-duplicated, keeping the first.
+
+On managed hosts (Render free tier, etc.) there is no separate "run this once"
+step, so the API also calls ``seed_if_empty()`` on startup — it loads the data
+only when the table is empty, making a fresh deploy fully self-seeding.
 """
 from __future__ import annotations
 
 import asyncio
 import csv
 import gzip
+import logging
 import os
 
-from sqlalchemy import delete, insert
+from sqlalchemy import delete, func, insert, select
 
 from app.db import SessionLocal, init_db
 from app.models import PincodeMapping
+
+log = logging.getLogger("bijli")
 
 DATA_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "pincode_mapping.csv.gz")
 BATCH = 2000
@@ -35,15 +42,37 @@ def _read_rows():
             yield {k: (v or None) for k, v in row.items()}
 
 
-async def main() -> None:
-    await init_db()
+async def _reload() -> int:
+    """Clear the table and bulk-load every row. Returns the row count."""
     rows = list(_read_rows())
     async with SessionLocal() as db:
         await db.execute(delete(PincodeMapping))
         for i in range(0, len(rows), BATCH):
             await db.execute(insert(PincodeMapping), rows[i : i + BATCH])
         await db.commit()
-    print(f"Loaded {len(rows)} pincode rows.")
+    return len(rows)
+
+
+async def seed_if_empty() -> int:
+    """Load the mapping only when the table has no rows (startup hook).
+
+    Returns the number of rows loaded, or 0 if the table was already populated.
+    Safe to call on every boot — a warm DB is left untouched.
+    """
+    async with SessionLocal() as db:
+        existing = await db.scalar(select(func.count()).select_from(PincodeMapping))
+    if existing:
+        log.info("pincode mapping already loaded (%s rows) — skipping seed", existing)
+        return 0
+    loaded = await _reload()
+    log.info("seeded %s pincode rows", loaded)
+    return loaded
+
+
+async def main() -> None:
+    await init_db()
+    loaded = await _reload()
+    print(f"Loaded {loaded} pincode rows.")
 
 
 if __name__ == "__main__":

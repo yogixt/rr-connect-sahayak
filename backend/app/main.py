@@ -43,6 +43,11 @@ LANGUAGE_META = {
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
+    # Self-seed the pincode->ASM mapping on a fresh database. No-op once loaded,
+    # so managed hosts (Render free tier, etc.) need no separate import step.
+    from scripts.import_pincode import seed_if_empty
+
+    await seed_if_empty()
     yield
 
 

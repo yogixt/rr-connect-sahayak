@@ -1,6 +1,21 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+def _as_asyncpg(url: str) -> str:
+    """Force the asyncpg driver on the DSN.
+
+    Managed hosts (Render, Railway, Fly, Heroku) inject a plain
+    ``postgresql://`` (sometimes legacy ``postgres://``) URL. SQLAlchemy's
+    async engine needs the ``+asyncpg`` driver, so normalise whatever the
+    platform gives us. A URL that already names a driver is left untouched.
+    """
+    if url.startswith("postgres://"):
+        url = "postgresql://" + url[len("postgres://") :]
+    if url.startswith("postgresql://"):
+        url = "postgresql+asyncpg://" + url[len("postgresql://") :]
+    return url
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
@@ -15,3 +30,4 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+settings.database_url = _as_asyncpg(settings.database_url)
