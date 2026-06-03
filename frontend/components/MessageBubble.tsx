@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Icon from "./Icon";
+import Image from "next/image";
 import RichText from "./RichText";
 import type { Message } from "@/lib/store";
 
@@ -26,8 +26,15 @@ export default function MessageBubble({ message }: { message: Message }) {
       animate={{ opacity: 1, y: 0 }}
       className="flex items-end gap-2"
     >
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-700">
-        <Icon name={message.icon} size={20} />
+      <span className="relative flex h-9 w-9 shrink-0 overflow-hidden rounded-full bg-amber-100 ring-1 ring-amber-200">
+        <Image
+          src="/electrician.png"
+          alt="Sahayak"
+          fill
+          sizes="36px"
+          draggable={false}
+          style={{ objectFit: "cover", pointerEvents: "none", userSelect: "none" }}
+        />
       </span>
       <div className="max-w-[82%] rounded-3xl rounded-bl-md border border-stone-200 bg-white px-5 py-3.5 shadow-sm">
         <RichText text={message.text} />
