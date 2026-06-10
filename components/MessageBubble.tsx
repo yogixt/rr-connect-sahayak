@@ -28,7 +28,7 @@ export default function MessageBubble({ message }: { message: Message }) {
     >
       <span className="relative flex h-9 w-9 shrink-0 overflow-hidden rounded-full bg-amber-100 ring-1 ring-amber-200">
         <Image
-          src="/electrician.png"
+          src="/electrician-classic.png"
           alt="Sahayak"
           fill
           sizes="36px"

@@ -11,7 +11,7 @@ import TypingDots from "./TypingDots";
 import { useChat } from "@/lib/store";
 
 export default function Chat() {
-  const { messages, busy, language, languages, choose, switchLanguage, begin, reset, error } =
+  const { messages, busy, language, languages, role, choose, switchLanguage, begin, reset, error } =
     useChat();
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -29,7 +29,13 @@ export default function Chat() {
         <Avatar size={44} src="/electrician-classic.png" />
         <div className="flex-1">
           <h1 className="text-lg font-bold leading-tight text-stone-900">RR Connect Sahayak</h1>
-          <p className="text-xs text-stone-400">Always here to help</p>
+          {role ? (
+            <span className="inline-block rounded-full bg-red-600 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+              {role === "KD" ? (language === "hi" ? "इलेक्ट्रिशियन" : "Electrician") : "Retailer"}
+            </span>
+          ) : (
+            <p className="text-xs text-stone-400">Always here to help</p>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <div className="flex gap-1">

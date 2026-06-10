@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 export default function Avatar({
   size = 120,
   draggable = false,
-  src = "/electrician.png",
+  src = "/electrician-classic.png",
 }: {
   size?: number;
   draggable?: boolean;

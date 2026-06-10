@@ -30,4 +30,5 @@ export interface ChatState {
   session_id: string;
   language: LangCode;
   node: ChatNode;
+  role: string | null;
 }

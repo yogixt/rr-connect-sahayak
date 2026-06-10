@@ -14,6 +14,7 @@ interface ChatStore {
   languages: Language[];
   language: LangCode | null;
   sessionId: string | null;
+  role: string | null;
   messages: Message[];
   busy: boolean;
   error: string | null;
@@ -45,6 +46,7 @@ export const useChat = create<ChatStore>((set, get) => ({
   languages: [],
   language: null,
   sessionId: null,
+  role: null,
   messages: [],
   busy: false,
   error: null,
@@ -66,6 +68,7 @@ export const useChat = create<ChatStore>((set, get) => ({
       set({
         sessionId: state.session_id,
         language: state.language,
+        role: state.role,
         messages: [botMessage(state.node)],
       });
     } catch (e) {
@@ -103,7 +106,7 @@ export const useChat = create<ChatStore>((set, get) => ({
 
     try {
       const state = await api.selectOption(sessionId, option.id, language);
-      set((s) => ({ messages: [...s.messages, botMessage(state.node)] }));
+      set((s) => ({ messages: [...s.messages, botMessage(state.node)], role: state.role ?? s.role }));
     } catch (e) {
       set({ error: (e as Error).message });
     } finally {
@@ -119,6 +122,7 @@ export const useChat = create<ChatStore>((set, get) => ({
     try {
       const state = await api.resumeSession(sessionId, language);
       set((s) => ({
+        role: state.role ?? s.role,
         messages: [
           ...s.messages.map((m) => (m.role === "bot" ? { ...m, options: undefined } : m)),
           botMessage(state.node),
@@ -143,7 +147,7 @@ export const useChat = create<ChatStore>((set, get) => ({
     }));
     try {
       const state = await api.submitPincode(sessionId, pincode);
-      set((s) => ({ messages: [...s.messages, botMessage(state.node)] }));
+      set((s) => ({ messages: [...s.messages, botMessage(state.node)], role: state.role ?? s.role }));
     } catch (e) {
       set({ error: (e as Error).message });
     } finally {
@@ -158,6 +162,7 @@ export const useChat = create<ChatStore>((set, get) => ({
   reset() {
     set({
       sessionId: null,
+      role: null,
       messages: [],
       language: null,
       error: null,

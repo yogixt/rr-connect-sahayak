@@ -82,7 +82,7 @@ export const NODES: Record<string, RawNode> = {
     },
     options: [
       { id: "wcd", icon: "bolt", label: { hi: "WCD", en: "WCD" }, next: "wcd" },
-      { id: "fmeg", icon: "plug", label: { hi: "FMEG", en: "FMEG" }, next: "fmeg_menu" },
+      { id: "fmeg", icon: "plug", label: { hi: "पंखे, लाइट और उपकरण", en: "Fans, Lights, and Appliances" }, next: "fmeg_menu" },
       mainMenu(),
     ],
   },
@@ -97,7 +97,7 @@ export const NODES: Record<string, RawNode> = {
     options: [mainMenu(), { id: "exit", icon: "logout", label: L_EXIT, next: "exit" }],
   },
 
-  // ============================================================ FMEG main menu
+  // ============================================================ Fans, Lights, and Appliances main menu
   fmeg_menu: {
     kind: "menu", icon: "plug",
     text: {
@@ -107,8 +107,7 @@ export const NODES: Record<string, RawNode> = {
     options: [
       { id: "qr", icon: "qr", label: { hi: "QR स्कैन नहीं हो रहा", en: "Can't scan QR" }, next: "qr1" },
       { id: "redeem", icon: "rupee", label: { hi: "पॉइंट्स रिडीम नहीं हो रहे", en: "Can't redeem points" }, next: "rp1" },
-      { id: "kyc", icon: "id-card", label: { hi: "KYC पूरा नहीं हो रहा", en: "Can't complete KYC" }, next: "kyc1" },
-      { id: "kyc_wf", icon: "id-card", label: { hi: "KYC अप्रूव नहीं हुआ", en: "KYC not approved" }, next: "kyc_wf1" },
+      { id: "kyc_related", icon: "id-card", label: { hi: "KYC संबंधित समस्या", en: "KYC related issue" }, next: "kyc_related_issue" },
       { id: "scheme", icon: "star", label: { hi: "स्कीम की जानकारी", en: "Scheme info" }, next: "scheme" },
       { id: "address", icon: "location", label: { hi: "पता अपडेट नहीं हो रहा", en: "Can't update address" }, next: "au1" },
       { id: "wrong_role", icon: "user", label: { hi: "गलत भूमिका", en: "Wrong role" }, next: "wrong_role" },
@@ -120,8 +119,8 @@ export const NODES: Record<string, RawNode> = {
   qr1: {
     kind: "menu", icon: "qr",
     text: {
-      hi: "स्कैन से पहले यह देखें:\n\n1. क्या आप **FMEG** पेज पर हैं?\n2. क्या फोन की **लोकेशन** चालू है?",
-      en: "Check these before scanning:\n\n1. Are you on the **FMEG** page?\n2. Is phone **Location** ON?",
+      hi: "स्कैन से पहले यह देखें:\n\n1. क्या आप **Fans, Lights, and Appliances** पेज पर हैं?\n2. क्या फोन की **लोकेशन** चालू है?",
+      en: "Check these before scanning:\n\n1. Are you on the **Fans, Lights, and Appliances** page?\n2. Is phone **Location** ON?",
     },
     options: [
       { id: "checked", icon: "checklist", label: { hi: "हाँ, देख लिया", en: "Yes, checked" }, next: "qr2" },
@@ -138,7 +137,8 @@ export const NODES: Record<string, RawNode> = {
       { id: "code_missing", icon: "alert", label: { hi: "कोड मौजूद नहीं है", en: "Code does not exist" }, next: "qr_code_missing" },
       { id: "enable_loc", icon: "location", label: { hi: "लोकेशन चालू करनी है", en: "Enable location" }, next: "qr_location" },
       { id: "scanned_other", icon: "alert", label: { hi: "किसी और ने स्कैन किया", en: "Scanned by someone else" }, next: "qr_scanned_other" },
-      { id: "scanned_self", icon: "clock", label: { hi: "मैंने पहले स्कैन किया था", en: "I scanned it before" }, next: "qr_scanned_self" },
+      { id: "scanned_self", icon: "clock", label: { hi: "पहले ही स्कैन है", en: "Already Scanned" }, next: "qr_scanned_self" },
+      { id: "other", icon: "alert", label: { hi: "अन्य समस्या", en: "Other Issues" }, next: "qr_other" },
       back("qr1"), mainMenu(),
     ],
   },
@@ -169,11 +169,19 @@ export const NODES: Record<string, RawNode> = {
     },
     options: [talkAsm(), back("qr2"), mainMenu()],
   },
+  qr_other: {
+    kind: "info", icon: "alert",
+    text: {
+      hi: "इस समस्या के लिए कृपया अपने **ASM** से बात करें।",
+      en: "Please talk to your **ASM** for this issue.",
+    },
+    options: [talkAsm(), back("qr2"), mainMenu()],
+  },
   qr_scanned_self: {
     kind: "info", icon: "clock",
     text: {
-      hi: "शायद आपके पॉइंट्स जुड़ चुके हैं।\n\n1. अपनी **स्कैन हिस्ट्री** देखें\n2. न दिखें तो **24 घंटे** रुकें\n3. फिर भी दिक्कत हो तो **ASM** से बात करें",
-      en: "Your points may already be added.\n\n1. Check your **Scan History**\n2. If not shown, wait **24 hours**\n3. Still a problem? Talk to your **ASM**",
+      hi: "शायद आपके पॉइंट्स जुड़ चुके हैं।\n\n1. अपनी **स्कैन हिस्ट्री** देखें\n2. न दिखें तो **24 घंटे** रुकें\n3. **फिर से स्कैन** करें\n4. फिर भी दिक्कत हो तो **ASM** से बात करें",
+      en: "Your points may already be added.\n\n1. Check your **Scan History**\n2. If not shown, wait **24 hours**\n3. **Scan again**\n4. Still a problem? Talk to your **ASM**",
     },
     options: [
       { id: "scan_history", icon: "clock", label: { hi: "स्कैन हिस्ट्री देखें", en: "Check Scan History" }, next: "resolved" },
@@ -196,10 +204,24 @@ export const NODES: Record<string, RawNode> = {
   rp2: {
     kind: "info", icon: "phone",
     text: {
-      hi: `अब भी दिक्कत है?\n\nकस्टमर केयर को कॉल करें।\n\n**नंबर:** ${CARE_NUMBER}`,
-      en: `Still a problem?\n\nPlease call Customer Care.\n\n**Number:** ${CARE_NUMBER}`,
+      hi: `कस्टमर केयर को कॉल करें।\n\n**नंबर:** ${CARE_NUMBER}`,
+      en: `Please call Customer Care.\n\n**Number:** ${CARE_NUMBER}`,
     },
     options: [mainMenu()],
+  },
+
+  // ===================================================== KYC related issue sub-menu
+  kyc_related_issue: {
+    kind: "menu", icon: "id-card",
+    text: {
+      hi: "KYC संबंधित समस्या",
+      en: "KYC related issue",
+    },
+    options: [
+      { id: "kyc", icon: "id-card", label: { hi: "KYC पूरा नहीं हो रहा", en: "Can't complete KYC" }, next: "kyc1" },
+      { id: "kyc_wf", icon: "id-card", label: { hi: "KYC अप्रूव नहीं हुआ", en: "KYC not approved" }, next: "kyc_wf1" },
+      back("fmeg_menu"), mainMenu(),
+    ],
   },
 
   // ===================================================== complete KYC
@@ -210,99 +232,57 @@ export const NODES: Record<string, RawNode> = {
       en: "Which page are you on now?",
     },
     options: [
-      { id: "on_fmeg", icon: "plug", label: { hi: "मैं FMEG पर हूँ", en: "I am on FMEG" }, next: "kyc2b" },
+      { id: "on_fmeg", icon: "plug", label: { hi: "मैं Fans, Lights, and Appliances पर हूँ", en: "I am on Fans, Lights, and Appliances" }, next: "kyc2b" },
       { id: "on_wires", icon: "bolt", label: { hi: "मैं Wires पर हूँ", en: "I am on Wires" }, next: "kyc2a" },
-      back("fmeg_menu"), mainMenu(),
+      back("kyc_related_issue"), mainMenu(),
     ],
   },
   kyc2a: {
     kind: "info", icon: "plug",
     text: {
-      hi: "**FMEG** पेज पर जाएँ और फिर से कोशिश करें।\n\nइससे दिक्कत ठीक हो जाएगी।",
-      en: "Go to the **FMEG** page and try again.\n\nThis should fix it.",
+      hi: "**Fans, Lights, and Appliances** पेज पर जाएँ और फिर से कोशिश करें।\n\nइससे दिक्कत ठीक हो जाएगी।",
+      en: "Go to the **Fans, Lights, and Appliances** page and try again.\n\nThis should fix it.",
     },
     options: [
-      { id: "go_fmeg", icon: "plug", label: { hi: "FMEG पेज खोलें", en: "Open FMEG page" }, next: "resolved" },
+      { id: "go_fmeg", icon: "plug", label: { hi: "Fans, Lights, and Appliances पेज खोलें", en: "Open Fans, Lights, and Appliances page" }, next: "resolved" },
       mainMenu(),
     ],
   },
   kyc2b: {
     kind: "info", icon: "id-card",
     text: {
-      hi: "आपका **KYC** अभी अप्रूव नहीं हुआ।\n\n- आप **स्कैन** कर सकते हैं\n- पर **रिडीम** नहीं कर सकते\n\nकृपया अपने **ASM** से बात करें।",
-      en: "Your **KYC** is not approved yet.\n\n- You can **scan**\n- But you cannot **redeem**\n\nPlease talk to your **ASM**.",
+      hi: "KYC अभी भी पूरा नहीं हो रहा?\n\n- आप **स्कैन** करना जारी रख सकते हैं\n- लेकिन **रिडीम** नहीं कर सकते\n\n**कस्टमर केयर** से संपर्क करें।",
+      en: "Still can not complete KYC details?\n\n- You can continue **scanning**\n- But you can not **redeem**\n\nContact **Customer Care**.",
     },
     options: [
       talkAsm(),
-      { id: "still", icon: "alert", label: { hi: "अब भी दिक्कत है", en: "Still a problem" }, next: "kyc3" },
       back("kyc1"), mainMenu(),
     ],
   },
-  kyc3: {
-    kind: "menu", icon: "location",
-    text: {
-      hi: "फोन की **लोकेशन** चालू करें।\n\nफिर से कोशिश करें।",
-      en: "Turn on phone **Location**.\n\nThen try again.",
-    },
-    options: [
-      { id: "checked", icon: "checklist", label: { hi: "देख लिया, फिर भी दिक्कत है", en: "Checked, still a problem" }, next: "kyc4" },
-      back("kyc2b"), mainMenu(),
-    ],
-  },
-  kyc4: {
-    kind: "info", icon: "phone",
-    text: {
-      hi: `अब भी दिक्कत है?\n\nकस्टमर केयर को कॉल करें।\n\n**नंबर:** ${CARE_NUMBER}`,
-      en: `Still a problem?\n\nPlease call Customer Care.\n\n**Number:** ${CARE_NUMBER}`,
-    },
-    options: [mainMenu()],
-  },
-
   // ============================================ KYC not approved / workflow
   kyc_wf1: {
     kind: "menu", icon: "id-card",
     text: {
-      hi: "क्या आप **FMEG** पेज पर हैं?\n\n**Wires** पेज पर हैं तो **FMEG** पेज पर जाएँ।",
-      en: "Are you on the **FMEG** page?\n\nIf on the **Wires** page, go to the **FMEG** page.",
+      hi: "क्या आप **Fans, Lights, and Appliances** पेज पर हैं?\n\n**Wires** पेज पर हैं तो **Fans, Lights, and Appliances** पेज पर जाएँ।",
+      en: "Are you on the **Fans, Lights, and Appliances** page?\n\nIf on the **Wires** page, go to the **Fans, Lights, and Appliances** page.",
     },
     options: [
-      { id: "go_fmeg", icon: "plug", label: { hi: "FMEG पेज खोलें", en: "Open FMEG page" }, next: "resolved" },
+      { id: "go_fmeg", icon: "plug", label: { hi: "Fans, Lights, and Appliances पेज खोलें", en: "Open Fans, Lights, and Appliances page" }, next: "resolved" },
       { id: "still", icon: "alert", label: { hi: "अब भी दिक्कत है", en: "Still a problem" }, next: "kyc_wf2" },
-      back("fmeg_menu"), mainMenu(),
+      back("kyc_related_issue"), mainMenu(),
     ],
   },
   kyc_wf2: {
     kind: "info", icon: "id-card",
     text: {
-      hi: "आपका **KYC** अभी अप्रूव नहीं हुआ।\n\n- आप **स्कैन** कर सकते हैं\n- पर **रिडीम** नहीं कर सकते\n\nकृपया अपने **ASM** से बात करें।",
-      en: "Your **KYC** is not approved yet.\n\n- You can **scan**\n- But you cannot **redeem**\n\nPlease talk to your **ASM**.",
+      hi: "आपका KYC अभी भी अप्रूव नहीं हुआ है।\n\n- आप **स्कैन** करना जारी रख सकते हैं\n- लेकिन **रिडीम** नहीं कर सकते\n\n**कस्टमर केयर** से संपर्क करें।",
+      en: "Your KYC is still not approved.\n\n- You can continue **scanning**\n- But you can not **redeem**\n\nContact **Customer Care**.",
     },
     options: [
       talkAsm(),
-      { id: "still", icon: "alert", label: { hi: "अब भी दिक्कत है", en: "Still a problem" }, next: "kyc_wf3" },
       back("kyc_wf1"), mainMenu(),
     ],
   },
-  kyc_wf3: {
-    kind: "menu", icon: "location",
-    text: {
-      hi: "फोन की **लोकेशन** चालू करें।",
-      en: "Turn on phone **Location**.",
-    },
-    options: [
-      { id: "checked", icon: "checklist", label: { hi: "देख लिया", en: "Checked" }, next: "kyc_wf4" },
-      back("kyc_wf2"), mainMenu(),
-    ],
-  },
-  kyc_wf4: {
-    kind: "info", icon: "phone",
-    text: {
-      hi: `अब भी दिक्कत है?\n\nकस्टमर केयर को कॉल करें।\n\n**नंबर:** ${CARE_NUMBER}`,
-      en: `Still a problem?\n\nPlease call Customer Care.\n\n**Number:** ${CARE_NUMBER}`,
-    },
-    options: [mainMenu()],
-  },
-
   // ===================================================== scheme
   scheme: {
     kind: "info", icon: "star",
@@ -363,8 +343,8 @@ export const NODES: Record<string, RawNode> = {
   au4: {
     kind: "info", icon: "phone",
     text: {
-      hi: `अब भी दिक्कत है?\n\nकस्टमर केयर को कॉल करें।\n\n**नंबर:** ${CARE_NUMBER}`,
-      en: `Still a problem?\n\nPlease call Customer Care.\n\n**Number:** ${CARE_NUMBER}`,
+      hi: `कस्टमर केयर को कॉल करें।\n\n**नंबर:** ${CARE_NUMBER}`,
+      en: `Please call Customer Care.\n\n**Number:** ${CARE_NUMBER}`,
     },
     options: [mainMenu()],
   },
