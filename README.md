@@ -7,6 +7,10 @@ animation.
 
 It is a single Next.js app that deploys to **Vercel** — no separate backend, no database.
 
+**Live:** [rr-connect-sahayak.vercel.app](https://rr-connect-sahayak.vercel.app)
+
+![Language picker screen](docs/screenshot.png)
+
 ## How it works
 
 ```
